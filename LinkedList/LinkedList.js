@@ -43,11 +43,11 @@ export class LinkedList {
     }
 
     head(){
-        return this._head.getValue();
+        return this._head;
     }
 
     tail(){
-        return this._tail.getValue();
+        return this._tail;
     }
 
     at(index){
@@ -62,13 +62,16 @@ export class LinkedList {
 
     pop(){
         if(this._head === this._tail){
+            const node = this._headl
             this._head = null;
             this._tail = null;
-            return
+            return node;
         }
         const nodeBeforeTail = this.at(this._size - 2);
+        let node = nodeBeforeTail.getNextNode();
         nodeBeforeTail.setNextNode(null);
         this._tail = nodeBeforeTail;
+        return node;
     }
 
     contains(value){
