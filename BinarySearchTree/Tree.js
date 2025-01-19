@@ -194,20 +194,62 @@ export class Tree {
     }
 
     isBalanced(){
-        return this.isBalancedRec(this.root);
+        return this.isBalancedRec(this.root).balanced;
     }
 
     isBalancedRec(node){
-        let balancedNode = true;
-        let leftNodeHeight = 0
-        let rightNodeHeght = 0
-        if(node.left !== null) leftNodeHeight = this.height(leftNodeHeight)
+        let balanced = false;
+        let height = 0;
+        let leftResult = {height: -1, balanced: true};
+        let rightResult = {height: -1, balanced: true};
+        if(node.left !== null){
+            leftResult = this.isBalancedRec(node.left);
+        }
+        if (node.right !== null){
+            rightResult = this.isBalancedRec(node.right);
+        }
+        if (node.left === null && node.right === null) return {height: 0, balanced: true};
+        if ( leftResult.balanced && rightResult.balanced){
+            let heightsDifference = 0;
+            if (node.left !== null && node.right !== null){
+                heightsDifference = leftResult.height - rightResult.height;
+                height = 1 + leftResult.height > rightResult.height ? leftResult.height : rightResult.height;
+            }else if ( node.left === null){
+                heightsDifference = leftResult.height - rightResult.height;
+                height = 1 + rightResult.height;
+            }else{
+                heightsDifference = leftResult.height - rightResult.height;
+                height = 1 + leftResult.height;
+            }
+            if( heightsDifference >= -1 && heightsDifference <= 1 ){
+                balanced = true;
+            }
+        }
+        return {height, balanced}
     }
 
     rebalance(){
-
+        if ( !this.isBalanced()){
+            this.root = this.buildTree(this.entriesInOrder());
+        }
     }
+
+    entriesInOrder(){
+        return this.entriesInOrderRec(this.root);
+    }
+
+    entriesInOrderRec(node){
+        if (node === null) return [];
+        let list = [];
+        list.push(...this.entriesInOrderRec(node.left));
+        list.push(...[node.data]);
+        list.push(...this.entriesInOrderRec(node.right));
+        return list;
+    }
+
 }
+
+
 
 function removeDuplicates(array){
     let copyArray = [...array];
